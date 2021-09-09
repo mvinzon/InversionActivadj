@@ -7,6 +7,7 @@
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
+
     	<!--Bootsrap 4 CDN-->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
@@ -24,43 +25,85 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-   {% block title %}
-   {% endblock title %}
+    {% block title %}
+    {% endblock title %}
+
     <nav class="navbar navbar-dark bg-dark">
         <ul class="nav nav-pills">
           <li class="nav-item">
-            <a class="nav-link" href="http://localhost:8000/inicio/" style="color:white">Home</a>
+            <a class="nav-link" href="{% url 'inicio' %}" style="color:white">Home</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="http://localhost:8000/contacto/" style="color:white">Contacto</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="http://localhost:8000/login/" style="color:white">Login</a>
-          </li>
+          {% if not user.is_authenticated %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'contacto' %}" style="color:white">Contacto</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'login' %}" style="color:white">Login</a>
+              </li>
+          {% endif %}
+
+          {% if user.is_authenticated %}
+              <li class="nav-item">
+                <a class="nav-link" href="#" style="color:white">Inversión</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#" style="color:white">Simulador</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#" style="color:white">Rendimiento</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#" style="color:white">Cotizaciones</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#" style="color:white">Noticias</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#" style="color:white">Ahorro</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#" style="color:white">Conversor</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#" style="color:white">TC</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'asesoria' %}" style="color:white">Asesoría</a>
+              </li>
+          {% endif %}
         </ul>
 
         {% if user.is_authenticated %}
 
             <div class="dropdown">
               <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  {{ user.username | upper }}
+{#                  {% if request.get_full_path == "/perfil/" %}#}
+{#                      Actualizando#}
+{#                  {% else %}#}
+                      {{ user.username | upper }}
+{#                  {% endif %}#}
               </a>
 
               <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <a class="dropdown-item" href="#">Perfil</a>
+                <a class="dropdown-item" href="{% url 'perfil' %}">Perfil</a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
               </div>
             </div>
 
+
         {% endif %}
+
     </nav>
+
   </head>
   <body>
 
 
     {% block content %}
     {% endblock content%}
+
+
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

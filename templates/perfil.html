@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}
+
+{% endblock title %}
+
+
+{% block content %}
+    <div class="container" style="position: absolute; top: 5%; left: 5%">
+            <div class="d-flex justify-content-center h-100">
+                <div class="card" style="width: 500px;height: 500px">
+                    <div class="card-header">
+                        <h3>Perfil de usuario</h3>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                          {% csrf_token %}
+                            {% for field in form %}
+                              <p>
+                                {{ field.label_tag }}<br>
+                                {{ field }} {{ field.value }}
+                                {% if field.help_text %}
+                                  <small style="color: grey">{{ field.help_text }}</small>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                  <small style="color: red">{{ error }}</small>
+                                {% endfor %}
+                              </p>
+                            {% endfor %}
+
+
+                            <div class="form-group">
+                                <input type="submit" value="Actualizar mis datos" class="btn float-right login_btn" style="background-color: cadetblue; width: 180px">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endblock content%}
