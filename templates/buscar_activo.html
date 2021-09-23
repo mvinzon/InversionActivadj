@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    {% block title %}
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+   {% endblock title %}
+</head>
+
+<body>
+{% block content %}
+    {% if user.is_authenticated %}
+        <div class="card-body" style="background-color: lightblue">
+            <nav class="navbar navbar-light bg-light">
+              <form class="form-inline"  method="post">
+                {% csrf_token %}
+                <input class="form-control mr-sm-2" type="search" placeholder="Ingrese el ticker" aria-label="Search" id="stocks" name="buscar">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+              </form>
+            </nav>
+        </div>
+{% comment %}        <div class="ui-widget">
+          <label for="tags">Tags: </label>
+          <input id="tags">
+        </div>{% endcomment %}
+
+
+        <table class="table table-striped table-hover" width="50px">
+          <thead>
+            <tr>
+              <th>Ticker</th>
+              <th>Últ. Precio</th>
+              <th>Variación</th>
+              <th>Volumen</th>
+            </tr>
+          </thead>
+          <tbody>
+
+          <!-- Recorremos los objetos o registros que tenemos en nuestra tabla 'postres' y los listamos -->
+          {% for stock in all_stocks %}
+            <tr>
+              <form class="form-inline"  method="post" action="{% url "consultar_activo" %}" id="consultar">
+                  {% csrf_token %}
+                  <td><input type="submit" name="simbolo" value="{{ stock.Simbolo }}"/></td>
+                  <td>{{ stock.Precio }}</td>
+                  <td>{{ stock.Variacion }}</td>
+                  <td>{{ stock.Volumen }}</td>
+              </form>
+            {% comment %}  <td>
+
+                <!-- Usaremos un formulario que realizará la tarea de eliminar un registro o postre desde la misma tabla HTML -->
+                <form method="POST" action="eliminar/{{postre.id}}">
+                  {% csrf_token %}
+                  <div class="btn-group">
+
+                    <!-- Creamos 3 botones que son ver, Editar y Eliminar, nos sirven para gestionar nuestros registros o postres -->
+                    <a href="detalle/{{postre.id}}" title="Ver" type="button" class="btn btn-success">Ver </a>
+                    <a href="editar/{{postre.id}}" title="Editar" type="button" class="btn btn-primary">Editar </a>
+                    <button class="btn btn-danger" onclick="return eliminar();" type="submit">
+                      Eliminar
+                    </button>
+                  </div>
+                </form>
+
+              </td>{% endcomment %}
+            </tr>
+          {% endfor %}
+
+          </tbody>
+        </table>
+
+    {% endif %}
+{% endblock content%}
+
+{% block scripts %}
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+      $( function() {
+        $( "#stocks" ).autocomplete({
+          source: '{% url 'buscar_activo' %}'
+        });
+      } );
+    </script>
+{% endblock scripts%}
+</body>
+</html>

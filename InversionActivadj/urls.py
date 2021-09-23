@@ -16,7 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth.views import LoginView, LogoutView
-from InversionActivadj.views import inicio, login2, contacto, registro, update_profile, asesoria
+from InversionActivadj.views import inicio, login2, contacto, registro, update_profile, asesoria, buscar_activo, \
+    CarteraInversionList, CarteraInversionCreate, CarteraInversionUpdate, CarteraInversionDelete, consultar_activo, \
+    PremiumUserCreate, gestionar_analisis
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,4 +31,12 @@ urlpatterns = [
     path('registro/', registro, name='registro'),
     path(r'perfil/', update_profile, name='perfil'),
     path(r'asesoria/', asesoria, name='asesoria'),
+    path(r'asesoria/nuevo/', PremiumUserCreate.as_view(template_name='premiumuser_form.html'), name='premiumuser'),
+    path(r'buscar_activo/', buscar_activo, name='buscar_activo'),
+    path(r'consultar_activo/', consultar_activo, name='consultar_activo'),
+    path(r'cartera_inversion/listar/', CarteraInversionList.as_view(template_name='carterainversion_list.html'), name='inversion_list'),
+    path(r'cartera_inversion/nuevo/', CarteraInversionCreate.as_view(template_name='carterainversion_form.html'), name='inversion_create'),
+    path(r'cartera_inversion/modificar/<slug:pk>', CarteraInversionUpdate.as_view(template_name='carterainversion_form.html'), name='inversion_edit'),
+    path(r'cartera_inversion/borrar/<slug:pk>', CarteraInversionDelete.as_view(template_name='carterainversionconfirmdelete.html'), name='inversion_delete'),
+    path(r'gestionar_analisis/', gestionar_analisis, name='gestionar_analisis'),
 ]

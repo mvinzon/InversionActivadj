@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    {% block title %}
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+   {% endblock title %}
+</head>
+
+<body>
+{% block content %}
+    {% if user.is_authenticated %}
+        <div class="card-body" style="background-color: lightblue">
+            <nav class="navbar navbar-light bg-light">
+              <form class="form-inline"  method="post" action="{% url 'buscar_activo' %}">
+                {% csrf_token %}
+                <input class="form-control mr-sm-2" type="hidden" placeholder="Ingrese el ticker" aria-label="Search" id="stocks" name="buscar">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Back</button>
+              </form>
+            </nav>
+        </div>
+{% comment %}        <div class="ui-widget">
+          <label for="tags">Tags: </label>
+          <input id="tags">
+        </div>{% endcomment %}
+
+        <div>
+            <table class="table table-striped table-hover" width="50px">
+          <thead>
+            <tr>
+              <th>Símbolo</th>
+              <th>Mercado</th>
+              <th>Tipo de activo</th>
+              <th>Compañía</th>
+              <th>País</th>
+              <th>Sector</th>
+              <th>Industria</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+                {% for data in stock_data %}
+                    <tr>
+                      <td>{{ data.Simbolo }}</td>
+                      <td>{{ data.Mercado }}</td>
+                      <td>{{ data.TipoActivo }}</td>
+                      <td>{{ data.Nombre }}</td>
+                      <td>{{ data.Pais }}</td>
+                      <td>{{ data.Sector }}</td>
+                      <td>{{ data.Industria }}</td>
+                      <td>{{ data.Descripcion }}</td>
+                    </tr>
+                  {% endfor %}
+
+              </tbody>
+            </table>
+        </div>
+
+
+          <!-- Recorremos los objetos o registros que tenemos en nuestra tabla 'postres' y los listamos -->
+
+
+        <div style="margin-top: 100px;">
+            <table class="table table-striped table-hover" width="50px">
+          <thead>
+            <tr>
+              <th>Moneda</th>
+              <th>Máx. 52 semanas</th>
+              <th>Mín. 52 semanas</th>
+              <th>Últ. Precio</th>
+              <th>Variación</th>
+              <th>Volumen</th>
+            </tr>
+          </thead>
+          <tbody>
+                {% for data in stock_data %}
+                    <tr>
+                      <td>{{ data.Moneda }}</td>
+                      <td>{{ data.Max52S }}</td>
+                      <td>{{ data.Min52S }}</td>
+                      <td>{{ data.Precio }}</td>
+                      <td>{{ data.Variacion }}</td>
+                      <td>{{ data.Volumen }}</td>
+                    </tr>
+                  {% endfor %}
+
+              </tbody>
+            </table>
+        </div>
+    {% endif %}
+{% endblock content%}
+
+{% block scripts %}
+
+{% endblock scripts%}
+</body>
+</html>

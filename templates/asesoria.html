@@ -15,7 +15,7 @@
     {% if user.is_authenticated and not user.premiumuser.is_premium %}
         <div class="card-body" style="background-color: lightblue">
             <p>Si quiere acceder a todas las funcionalidades de asesoría financiera y análisis económicos debe activar su usuario premium.</p>
-            <a class="button" href="#" >Activar usuario premium</a>
+            <a class="button" href="{% url 'premiumuser' %}" >Activar usuario premium</a>
         </div>
     {% endif %}
 
