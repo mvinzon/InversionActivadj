@@ -18,7 +18,7 @@ from django.urls import path, include
 from django.contrib.auth.views import LoginView, LogoutView
 from InversionActivadj.views import inicio, login2, contacto, registro, update_profile, asesoria, buscar_activo, \
     CarteraInversionList, CarteraInversionCreate, CarteraInversionUpdate, CarteraInversionDelete, consultar_activo, \
-    PremiumUserCreate, gestionar_analisis
+    PremiumUserCreate, gestionar_analisis, perfil_inversor
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -39,4 +39,5 @@ urlpatterns = [
     path(r'cartera_inversion/modificar/<slug:pk>', CarteraInversionUpdate.as_view(template_name='carterainversion_form.html'), name='inversion_edit'),
     path(r'cartera_inversion/borrar/<slug:pk>', CarteraInversionDelete.as_view(template_name='carterainversionconfirmdelete.html'), name='inversion_delete'),
     path(r'gestionar_analisis/', gestionar_analisis, name='gestionar_analisis'),
+    path(r'perfil_inversor/', perfil_inversor, name='perfil_inversor'),
 ]

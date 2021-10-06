@@ -10,7 +10,7 @@ from alpha_vantage.timeseries import TimeSeries
 from alpha_vantage.fundamentaldata import FundamentalData
 from collections import namedtuple
 
-from aplicaciones.main.models import CarteraInversion, PremiumUser
+from aplicaciones.main.models import CarteraInversion, PremiumUser, PerfilInversor, Asesor
 from .forms import SignUpForm, UpdateProfile
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 
@@ -213,12 +213,61 @@ class PremiumUserCreate(CreateView):
     model = PremiumUser
     success_url = reverse_lazy('asesoria')
     fields = ['tarjeta', 'numero_tarjeta']
-
-    def form_valid(self, form):
+    asesor = Asesor.objects.order_by("?").first()
+    print(asesor)
+    def form_valid(self, form, asesor=asesor):
         form.instance.user = self.request.user
         form.instance.is_premium = True
+        form.instance.asesor = asesor.id
         return super().form_valid(form)
 
 
 def gestionar_analisis(request):
     return render(request, 'gestionar_analisis.html')
+
+
+def perfil_inversor(request):
+    if request.method == 'POST':
+        respuestas = []
+        conservador = 0
+        moderado = 0
+        agresivo = 0
+        perfil = None
+        descripcion = None
+        respuestas.append(request.POST.get('conocimiento_financiero'))
+        respuestas.append(request.POST.get('inversion_previa'))
+        respuestas.append(request.POST.get('porcentaje_ahorros'))
+        respuestas.append(request.POST.get('plazo_inversion'))
+        respuestas.append(request.POST.get('inversion_pg'))
+        respuestas.append(request.POST.get('disminucion_capital'))
+
+        for respuesta in respuestas:
+            if respuesta == '1':
+                conservador += 1
+            elif respuesta == '2':
+                moderado += 1
+            elif respuesta == '3':
+                agresivo += 1
+
+        if conservador > moderado and conservador > agresivo:
+            perfil = 'Conservador'
+            descripcion = 'Su principal objetivo es la preservaci[on del capital, o un crecimiento moderado sin ' \
+                          'asumir importantes riesgos. Otorga valor a la liquidez o disponibilidad de sus ' \
+                          'inversiones, y opta por instrumentos en los que pueda minimizar el impacto de las ' \
+                          'fluctuaciones del mercado. '
+        elif agresivo > conservador and agresivo > moderado:
+            perfil = 'Agresivo'
+            descripcion = 'Se caracteriza por realizar inversiones cuyo objetivo principal es maximizar el ' \
+                          'rendimiento de su cartera, y está dispuesto a afrontar altos riesgos y volatilidad. No le ' \
+                          'asigna un alto nivel de importancia a la disponibilidad inmediata de sus inversiones, ' \
+                          'y soporta asumir pérdidas de capital. '
+        else:
+            perfil = 'Moderado'
+            descripcion = 'Su objetivo busca un balance entre rendimiento y seguridad. Está dispuesto a asumir ' \
+                          'ciertas oscilaciones y/o tolerar ciertos riesgos, con el objetivo de obtener una mayor ' \
+                          'rentabilidad a mediano/largo plazo. Es un perfil intermedio entre el inversor conservador ' \
+                          'y agresivo. '
+
+        pi = PerfilInversor(user=request.user, perfil=perfil, descripcion=descripcion)
+        pi.save()
+    return render(request, 'perfil_inversor.html')

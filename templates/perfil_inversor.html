@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% block title %}
+        <title>Perfil del inversor</title>
+
+   {% endblock title %}
+
+
+</head>
+<body>
+
+    {% block content %}
+
+        <p>Perfil del inversor</p>
+
+        {% if user.perfilinversor.perfil == '' %}
+            <form style="margin-left: 50px" method="post">
+            {% csrf_token %}
+                <h5>1. ¿Cuál es tu grado de conocimiento en temas financieros?</h5>
+                <input type="radio" id="1.1" name="conocimiento_financiero" value="1">
+                <label for="1.1">No tengo conocimientos de temas financieros.</label><br>
+                <input type="radio" id="1.2" name="conocimiento_financiero" value="2">
+                <label for="1.2">Sigo el tema a través de los medios de comunicación y contenidos especializados.</label><br>
+                <input type="radio" id="1.3" name="conocimiento_financiero" value="3">
+                <label for="1.3">Tengo formación en el área a través de cursos y lectura técnica especializada.</label><br>
+                <br>
+                <h5>2. ¿Realizaste alguna inversión en el Mercado de Capitales?</h5>
+                <input type="radio" id="2.1" name="inversion_previa" value="1">
+                <label for="2.1">Nunca realicé inversiones.</label><br>
+                <input type="radio" id="2.2" name="inversion_previa" value="2">
+                <label for="2.2">No realicé inversiones, pero conozco algunas alternativas para invertir.</label><br>
+                <input type="radio" id="2.3" name="inversion_previa" value="3">
+                <label for="2.3">Realicé inversiones y conozco los distintos productos disponibles en el mercado.</label><br>
+                <br>
+                <h5>3. ¿Qué porcentaje de tus ahorros estás dispuesto a invertir?</h5>
+                <input type="radio" id="3.1" name="porcentaje_ahorros" value="1">
+                <label for="3.1">Menos del 25%</label><br>
+                <input type="radio" id="3.2" name="porcentaje_ahorros" value="2">
+                <label for="3.2">Menos del 50%</label><br>
+                <input type="radio" id="3.3" name="porcentaje_ahorros" value="3">
+                <label for="3.3">Más del 51%</label><br>
+                <br>
+                <h5>4. ¿Cuál es el plazo máximo que estarías dispuesto a mantener tus inversiones en el Mercado de Capitales?</h5>
+                <input type="radio" id="4.1" name="plazo_inversion" value="1">
+                <label for="4.1">Menos de 6 meses.</label><br>
+                <input type="radio" id="4.2" name="plazo_inversion" value="2">
+                <label for="4.2">De 6 meses a 1 año.</label><br>
+                <input type="radio" id="4.3" name="plazo_inversion" value="3">
+                <label for="4.3">Más de 1 año.</label><br>
+                <br>
+                <h5>5. Cuando invertís tu dinero, estás...</h5>
+                <input type="radio" id="5.1" name="inversion_pg" value="1">
+                <label for="5.1">Mayormente preocupado por las pérdidas de valor de tu cartera.</label><br>
+                <input type="radio" id="5.2" name="inversion_pg" value="2">
+                <label for="5.2">Preocupado por las pérdidas y ganancias de valor de tu cartera.</label><br>
+                <input type="radio" id="5.3" name="inversion_pg" value="3">
+                <label for="5.3">Mayormente preocupado por las ganancias de valor de tu cartera.</label><br>
+                <br>
+                <h5>6. ¿Qué porcentaje de disminución del capital de tus ahorros estarías dispuesto a asumir al invertir en el Mercado de Capitales?</h5>
+                <input type="radio" id="6.1" name="disminucion_capital" value="1">
+                <label for="6.1">Hasta el 5%</label><br>
+                <input type="radio" id="6.2" name="disminucion_capital" value="2">
+                <label for="6.2">Hasta el 25%</label><br>
+                <input type="radio" id="6.3" name="disminucion_capital" value="3">
+                <label for="6.3">Más del 26%</label><br>
+                <br>
+
+                <input type="submit" value="Conocé tu perfil de inversor">
+                <input type="button" value="Cancelar">
+                <br>
+            </form>
+        {% endif %}
+
+        {% if user.perfilinversor.perfil != '' %}
+            <p>De acuerdo a tus respuestas, tu perfil es: </p>
+            <h4>{{ user.perfilinversor.perfil }}</h4>
+            <p>{{ user.perfilinversor.descripcion }}</p>
+            <p>El presente perfil de riesgo, que tendrá vigencia de un año desde su fecha de creación, está basado exclusivamente en la información y/o documentación que Ud. nos ha provisto, siendo responsable por su veracidad, exactitud y vigencia, comprometiéndose asimismo a mantenerla debidamente actualizada. Consecuentemente, todo error y/o inconsistencia que pudiera existir en el perfil de riesgo en razón de la provisión de información errónea, inexacta y/o desactualizada es de su exclusiva responsabilidad.</p>
+        {% endif %}
+    {% endblock %}
+
+</body>
+</html>
