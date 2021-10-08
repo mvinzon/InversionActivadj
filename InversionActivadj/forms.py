@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from django.forms import ModelForm
 from django.utils.translation import ugettext_lazy as _
 
+from aplicaciones.main.models import Mensajes, PremiumUser
+
 
 class SignUpForm(UserCreationForm):
     first_name = forms.CharField(max_length=140, required=True, label="Nombre")
@@ -62,3 +64,19 @@ class UpdateProfile(forms.ModelForm):
             user.save()
 
         return user
+
+
+# class MensajesForm(forms.ModelForm):
+#     asunto = forms.CharField(required=True, label="Asunto")
+#     mensaje = forms.CharField(required=True, label="Mensaje")
+#     destinatario = forms.IntegerField(required=True, label="Destinatario")
+#
+#     class Meta:
+#         model = Mensajes
+#         fields = ('asunto', 'mensaje', 'destinatario')
+#
+#     def __init__(self, *args, **kwargs):
+#        remitente = kwargs.pop('remitente')
+#        super(MensajesForm, self).__init__(*args, **kwargs)
+#        self.fields['destinatario'].queryset = PremiumUser.objects.filter(user=remitente)
+#        print(self.fields['destinatario'].queryset)

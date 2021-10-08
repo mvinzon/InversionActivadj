@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    {% block title %}
+
+   {% endblock title %}
+</head>
+
+<body>
+{% block content %}
+        <div class="card-body" style="background-color: lightblue">
+            <a href="{% url "mensajes_create" %}">Agregar</a>
+        </div>
+
+
+
+        <table class="table table-striped table-hover" width="50px">
+          <thead>
+            <tr>
+              <th>Remitente</th>
+              <th>Asunto</th>
+              <th>Mensaje</th>
+              <th>Fecha</th>
+              <th>Destinatario</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+
+
+          {% for record in object_list %}
+            <tr>
+              <td>{{ record.remitente }}</td>
+              <td>{{ record.asunto }}</td>
+              <td>{{ record.mensaje }}</td>
+              <td>{{ record.fecha }}</td>
+              <td>{{ record.destinatario }}</td>
+            </tr>
+          {% endfor %}
+
+          </tbody>
+        </table>
+
+{% endblock content%}
+
+{% block scripts %}
+
+{% endblock scripts%}
+</body>
+</html>

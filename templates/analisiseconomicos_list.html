@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    {% block title %}
+
+   {% endblock title %}
+</head>
+
+<body>
+{% block content %}
+
+
+        <table class="table table-striped table-hover" width="50px" style="background-color: lightblue">
+          <thead>
+            <tr>
+              <th>Categoría</th>
+              <th>Título</th>
+              <th>Fecha</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+
+
+          {% for record in object_list %}
+            <tr>
+              <td>{{ record.categoria }}</td>
+              <td>{{ record.titulo }}</td>
+              <td>{{ record.fecha }}</td>
+
+            </tr>
+          {% endfor %}
+
+          </tbody>
+        </table>
+
+{% endblock content%}
+
+{% block scripts %}
+
+{% endblock scripts%}
+</body>
+</html>

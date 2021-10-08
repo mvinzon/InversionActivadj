@@ -18,7 +18,8 @@ from django.urls import path, include
 from django.contrib.auth.views import LoginView, LogoutView
 from InversionActivadj.views import inicio, login2, contacto, registro, update_profile, asesoria, buscar_activo, \
     CarteraInversionList, CarteraInversionCreate, CarteraInversionUpdate, CarteraInversionDelete, consultar_activo, \
-    PremiumUserCreate, gestionar_analisis, perfil_inversor
+    PremiumUserCreate, gestionar_analisis, perfil_inversor, bandeja_entrada, MensajesList, MensajesCreate, \
+    AnalisisEconomicosList, visualizar_noticias
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -40,4 +41,8 @@ urlpatterns = [
     path(r'cartera_inversion/borrar/<slug:pk>', CarteraInversionDelete.as_view(template_name='carterainversionconfirmdelete.html'), name='inversion_delete'),
     path(r'gestionar_analisis/', gestionar_analisis, name='gestionar_analisis'),
     path(r'perfil_inversor/', perfil_inversor, name='perfil_inversor'),
+    path(r'bandeja_entrada/listar/', MensajesList.as_view(template_name='mensajes_list.html'), name='mensajes_list'),
+    path(r'bandeja_entrada/nuevo/', MensajesCreate.as_view(template_name='mensajes_form.html'), name='mensajes_create'),
+    path(r'analisis_economicos/listar/', AnalisisEconomicosList.as_view(template_name='analisiseconomicos_list.html'), name='analisiseconomicos_list'),
+    path(r'consultar_activo/noticias/', visualizar_noticias, name='visualizar_noticias'),
 ]

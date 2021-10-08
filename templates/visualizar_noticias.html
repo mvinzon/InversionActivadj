@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    {% block title %}
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+   {% endblock title %}
+</head>
+
+<body>
+{% block content %}
+    {% if user.is_authenticated %}
+        Noticias del activo
+    {% endif %}
+{% endblock content%}
+
+{% block scripts %}
+
+{% endblock scripts%}
+</body>
+</html>

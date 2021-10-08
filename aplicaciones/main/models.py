@@ -39,5 +39,13 @@ class Mensajes(models.Model):
     remitente = models.ForeignKey(User, on_delete=models.CASCADE, related_name='send')
     asunto = models.CharField(max_length=100)
     mensaje = models.CharField(max_length=1000)
-    fecha = models.DateField()
+    fecha = models.DateTimeField()
     destinatario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receive')
+
+
+class AnalisisEconomicos(models.Model):
+    asesor = models.ForeignKey(Asesor, on_delete=models.CASCADE)
+    categoria = models.CharField(max_length=100)
+    titulo = models.CharField(max_length=100)
+    analisis = models.CharField(max_length=2000)
+    fecha = models.DateTimeField()

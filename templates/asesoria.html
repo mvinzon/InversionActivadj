@@ -12,6 +12,10 @@
 
 <body>
 {% block content %}
+    {% if user.is_authenticated and user.premiumuser.is_premium %}
+        <a class="button" href="{% url "analisiseconomicos_list" %}">Consultar análisis económicos</a>
+    {% endif %}
+
     {% if user.is_authenticated and not user.premiumuser.is_premium %}
         <div class="card-body" style="background-color: lightblue">
             <p>Si quiere acceder a todas las funcionalidades de asesoría financiera y análisis económicos debe activar su usuario premium.</p>
@@ -20,8 +24,11 @@
     {% endif %}
 
     {% if user.is_authenticated and user.premiumuser.is_premium %}
-        <textarea class="text" cols="50" rows="4"></textarea>
-        <a class="button" href="#" >Contactar asesor</a>
+        <form method="post">
+            {% csrf_token %}
+            <textarea class="text" cols="50" rows="4" name="mje_asesor"></textarea>
+            <button type="submit">Contactar asesor</button>
+        </form>
     {% endif %}
 {% endblock content%}
 </body>

@@ -1,3 +1,5 @@
+import datetime
+from django.db.models import Q
 import requests
 from django.contrib.auth import authenticate, login
 from django.db import transaction
@@ -10,7 +12,7 @@ from alpha_vantage.timeseries import TimeSeries
 from alpha_vantage.fundamentaldata import FundamentalData
 from collections import namedtuple
 
-from aplicaciones.main.models import CarteraInversion, PremiumUser, PerfilInversor, Asesor
+from aplicaciones.main.models import CarteraInversion, PremiumUser, PerfilInversor, Asesor, Mensajes, AnalisisEconomicos
 from .forms import SignUpForm, UpdateProfile
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 
@@ -89,7 +91,47 @@ def update_profile(request):
 
 
 def asesoria(request):
+    if request.method == 'POST':
+        if request.POST.get('mje_asesor'):
+            print(request.user.premiumuser.asesor_id.user)
+            mje = Mensajes(remitente=request.user,
+                           asunto='Contacto asesor',
+                           mensaje=request.POST.get('mje_asesor'),
+                           fecha=datetime.datetime.now(),
+                           destinatario=request.user.premiumuser.asesor_id.user)
+            mje.save()
     return render(request, 'asesoria.html')
+
+
+class MensajesCreate(CreateView):
+    model = Mensajes
+    success_url = reverse_lazy('mensajes_list')
+    fields = ['asunto', 'mensaje', 'destinatario']
+
+    def form_valid(self, form):
+        form.instance.remitente = self.request.user
+        form.instance.fecha = datetime.datetime.now()
+        return super().form_valid(form)
+    # template_name = 'mensajes_create.html'
+    # form_class = MensajesForm
+    #
+    # def get_form_kwargs(self):
+    #     kwargs = super(MensajesCreate, self).get_form_kwargs()
+    #     kwargs['remitente'] = self.request.user
+    #     return kwargs
+
+
+class MensajesList(ListView):
+    model = Mensajes
+
+    def get_queryset(self):
+        return Mensajes.objects.filter(
+            Q(remitente=self.request.user) | Q(destinatario=self.request.user)
+        ).order_by('-fecha')
+
+
+def bandeja_entrada(request):
+    return render(request, 'bandeja_entrada.html')
 
 
 def buscar_activo(request):
@@ -187,6 +229,11 @@ def consultar_activo(request):
 class CarteraInversionList(ListView):
     model = CarteraInversion
 
+    def get_queryset(self):
+        return CarteraInversion.objects.filter(
+            user=self.request.user
+        ).order_by('simbolo')
+
 
 class CarteraInversionCreate(CreateView):
     model = CarteraInversion
@@ -214,7 +261,7 @@ class PremiumUserCreate(CreateView):
     success_url = reverse_lazy('asesoria')
     fields = ['tarjeta', 'numero_tarjeta']
     asesor = Asesor.objects.order_by("?").first()
-    print(asesor)
+
     def form_valid(self, form, asesor=asesor):
         form.instance.user = self.request.user
         form.instance.is_premium = True
@@ -271,3 +318,18 @@ def perfil_inversor(request):
         pi = PerfilInversor(user=request.user, perfil=perfil, descripcion=descripcion)
         pi.save()
     return render(request, 'perfil_inversor.html')
+
+
+class AnalisisEconomicosList(ListView):
+    model = AnalisisEconomicos
+
+    def get_queryset(self):
+        return AnalisisEconomicos.objects.filter(
+            Q(asesor=self.request.user.premiumuser.asesor_id)
+        ).order_by('-fecha')
+
+
+def visualizar_noticias(request):
+    if request.method == 'POST':
+        print(request.POST.get('smbl_news2'))
+    return render(request, 'visualizar_noticias.html')
