@@ -21,12 +21,12 @@ class CarteraInversion(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     simbolo = models.CharField(max_length=6)
     descripcion = models.CharField(max_length=150)
-    precio_compra = models.FloatField()
+    precio_compra = models.DecimalField(max_digits=19, decimal_places=2)
     cantidad_compra = models.IntegerField()
     fecha_compra = models.DateField()
     cantidad_venta = models.IntegerField(blank=True, default=0)
-    precio_ult_venta = models.FloatField(blank=True, default=0)
-    ganancias_perdidas = models.FloatField(blank=True, default=0)
+    precio_ult_venta = models.DecimalField(blank=True, default=0, max_digits=19, decimal_places=2)
+    ganancias_perdidas = models.DecimalField(blank=True, default=0, max_digits=19, decimal_places=2)
 
 
 class PerfilInversor(models.Model):
@@ -47,5 +47,47 @@ class AnalisisEconomicos(models.Model):
     asesor = models.ForeignKey(Asesor, on_delete=models.CASCADE)
     categoria = models.CharField(max_length=100)
     titulo = models.CharField(max_length=100)
-    analisis = models.CharField(max_length=2000)
+    analisis = models.TextField(max_length=2000)
     fecha = models.DateTimeField()
+
+
+class CuentaAhorro(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    descripcion = models.CharField(max_length=120)
+    saldo = models.DecimalField(blank=True, default=0, max_digits=19, decimal_places=2)
+    moneda = models.CharField(max_length=80)
+
+    def __str__(self):
+        return self.descripcion
+
+
+class TipoMovimiento(models.Model):
+    tipo = models.CharField(max_length=80)
+
+    def __str__(self):
+        return self.tipo
+
+
+class CategoriaMovimiento(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    nombre = models.CharField(max_length=180)
+
+    def __str__(self):
+        return self.nombre
+
+
+class CarteraAhorro(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    cuenta = models.ForeignKey(CuentaAhorro, on_delete=models.DO_NOTHING)
+    tipo_movimiento = models.ForeignKey(TipoMovimiento, on_delete=models.DO_NOTHING, blank=True)
+    categoria_movimiento = models.ForeignKey(CategoriaMovimiento, on_delete=models.DO_NOTHING)
+    importe = models.DecimalField(blank=True, default=0, max_digits=19, decimal_places=2)
+    fecha_movimiento = models.DateTimeField()
+    nota = models.CharField(max_length=300, blank=True)
+
+
+class CodigoMoneda(models.Model):
+    codigo = models.CharField(max_length=3)
+    en_descr = models.CharField(max_length=100)
+    sp_descr = models.CharField(max_length=100, blank=True)
+

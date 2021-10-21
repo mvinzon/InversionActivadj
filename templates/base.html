@@ -61,16 +61,16 @@
                 <a class="nav-link" href="#" style="color:white">Cotizaciones</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#" style="color:white">Noticias</a>
+                <a class="nav-link" href="{% url 'consultar_noticias_economicas' %}" style="color:white">Noticias</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#" style="color:white">Ahorro</a>
+                <a class="nav-link" href="{% url 'carteraahorro_list' %}" style="color:white">Ahorro</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#" style="color:white">Conversor</a>
+                <a class="nav-link" href="{% url "conversor_moneda" %}" style="color:white">Conversor</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#" style="color:white">TC</a>
+                <a class="nav-link" href="{% url "tipos_cambio" %}" style="color:white">TC</a>
               </li>
               {% if not user.asesor.is_asesor %}
                   <li class="nav-item">
@@ -79,7 +79,7 @@
               {% endif %}
               {% if user.asesor.is_asesor %}
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'gestionar_analisis' %}" style="color:white">Gestionar análisis</a>
+                    <a class="nav-link" href="{% url "analisiseconomicos_list" %}" style="color:white">Gestionar análisis</a>
                   </li>
               {% endif %}
           {% endif %}

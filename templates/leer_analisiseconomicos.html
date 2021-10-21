@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}
+
+{% endblock title %}
+
+
+{% block content %}
+
+    {% for data in analisis_data %}
+        <h6>{{ data.categoria }}</h6>
+        <h1>{{ data.titulo }}</h1>
+        <p>{{ data.fecha }}</p>
+        <br>
+        <p>{{ data.analisis }}</p>
+
+    {% endfor %}
+
+
+{% endblock content%}

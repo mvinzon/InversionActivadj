@@ -20,14 +20,10 @@
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Back</button>
               </form>
 
-              <label for="submit-form" tabindex="0">Noticias relevantes</label>
+                <button class="news_btn"><label for="submit-form" tabindex="0">Noticias relevantes</label></button>
 
             </nav>
         </div>
-{% comment %}        <div class="ui-widget">
-          <label for="tags">Tags: </label>
-          <input id="tags">
-        </div>{% endcomment %}
 
         <div>
         <form class="form-inline"  method="post" action="{% url 'visualizar_noticias' %}">
@@ -48,7 +44,7 @@
           <tbody>
                 {% for data in stock_data %}
                     <tr>
-                      <td>{{ data.Simbolo }}</td>
+                      <td><input type="submit" id="submit-form" name="smbl_news2" value="{{ data.Simbolo }}" hidden />{{ data.Simbolo }}</td>
                       <td>{{ data.Mercado }}</td>
                       <td>{{ data.TipoActivo }}</td>
                       <td>{{ data.Nombre }}</td>
@@ -61,12 +57,9 @@
 
               </tbody>
             </table>
-        <input type="submit" id="submit-form" name="smbl_news2" value="{{ data.Simbolo }}"  />
+
         </form>
         </div>
-
-
-          <!-- Recorremos los objetos o registros que tenemos en nuestra tabla 'postres' y los listamos -->
 
 
         <div style="margin-top: 100px;">

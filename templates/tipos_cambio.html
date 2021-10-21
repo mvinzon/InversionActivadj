@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    {% block title %}
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+   {% endblock title %}
+</head>
+
+<body>
+{% block content %}
+    {% if user.is_authenticated %}
+
+        <div>
+        <form class="form-inline"  method="post" action="{% url 'tipos_cambio' %}">
+        {% csrf_token %}
+            <table class="table table-striped table-hover" width="50px">
+          <thead>
+            <tr>
+              <th>Código de moneda</th>
+              <th>Tipo de cambio</th>
+            </tr>
+          </thead>
+          <tbody>
+                {% for data in exchange_rates %}
+                    <tr>
+                      <td><input type="submit" id="submit-form" name="curr_code" value="{{ data.Codigo }}"  /></td>
+                      <td>{{ data.TC }}</td>
+                    </tr>
+                  {% endfor %}
+
+              </tbody>
+            </table>
+
+        </form>
+        </div>
+
+    {% endif %}
+{% endblock content%}
+
+{% block scripts %}
+
+{% endblock scripts%}
+</body>
+</html>

@@ -1,8 +1,9 @@
-import datetime
+import datetime, decimal
 from django.db.models import Q
 import requests
 from django.contrib.auth import authenticate, login
 from django.db import transaction
+from django.forms import model_to_dict
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
@@ -11,14 +12,17 @@ from django.urls import reverse, reverse_lazy
 from alpha_vantage.timeseries import TimeSeries
 from alpha_vantage.fundamentaldata import FundamentalData
 from collections import namedtuple
+from django.core import serializers
 
-from aplicaciones.main.models import CarteraInversion, PremiumUser, PerfilInversor, Asesor, Mensajes, AnalisisEconomicos
+from aplicaciones.main.models import CarteraInversion, PremiumUser, PerfilInversor, Asesor, Mensajes, \
+    AnalisisEconomicos, CuentaAhorro, CategoriaMovimiento, CarteraAhorro
 from .forms import SignUpForm, UpdateProfile
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 
 import pandas
 
 API_KEY = '7N8QDLMUWNR7BH4B'
+ER_API_KEY = '848d30c8c7c94343aa83977a'
 
 
 def inicio(request):
@@ -93,7 +97,6 @@ def update_profile(request):
 def asesoria(request):
     if request.method == 'POST':
         if request.POST.get('mje_asesor'):
-            print(request.user.premiumuser.asesor_id.user)
             mje = Mensajes(remitente=request.user,
                            asunto='Contacto asesor',
                            mensaje=request.POST.get('mje_asesor'),
@@ -269,10 +272,6 @@ class PremiumUserCreate(CreateView):
         return super().form_valid(form)
 
 
-def gestionar_analisis(request):
-    return render(request, 'gestionar_analisis.html')
-
-
 def perfil_inversor(request):
     if request.method == 'POST':
         respuestas = []
@@ -324,12 +323,344 @@ class AnalisisEconomicosList(ListView):
     model = AnalisisEconomicos
 
     def get_queryset(self):
-        return AnalisisEconomicos.objects.filter(
-            Q(asesor=self.request.user.premiumuser.asesor_id)
-        ).order_by('-fecha')
+        try:
+            if self.request.user.premiumuser:
+                return AnalisisEconomicos.objects.filter(
+                    Q(asesor=self.request.user.premiumuser.asesor_id)
+                ).order_by('-fecha')
+        except Exception:
+            if self.request.user.asesor:
+                return AnalisisEconomicos.objects.filter(
+                    Q(asesor=self.request.user.asesor)
+                ).order_by('-fecha')
+
+
+class AnalisisEconomicosCreate(CreateView):
+    model = AnalisisEconomicos
+    success_url = reverse_lazy('analisiseconomicos_list')
+    fields = ['fecha', 'categoria', 'titulo', 'analisis']
+
+    def form_valid(self, form):
+        form.instance.asesor = self.request.user.asesor
+        return super().form_valid(form)
+
+
+class AnalisisEconomicosUpdate(UpdateView):
+    model = AnalisisEconomicos
+    success_url = reverse_lazy('analisiseconomicos_list')
+    fields = ['fecha', 'categoria', 'titulo', 'analisis']
+
+
+class AnalisisEconomicosDelete(DeleteView):
+    model = AnalisisEconomicos
+    success_url = reverse_lazy('analisiseconomicos_list')
+
+
+def leer_analisiseconomicos(request, pk):
+    print(request, pk)
+    analisis_db = AnalisisEconomicos.objects.get(pk=pk)
+    analisis = []
+    analisis_data = []
+    analisis_db_dict = model_to_dict(analisis_db)
+
+    analisis.append(analisis_db_dict)
+    if analisis is not None and bool(analisis[0]):
+        for i in range(0, len(analisis)):
+            AnalisisEc = namedtuple("AnalisisEc",
+                                    ["id",
+                                     "asesor",
+                                     "categoria",
+                                     "titulo",
+                                     "analisis",
+                                     "fecha"])
+
+            record = AnalisisEc(analisis[i]["id"],
+                                analisis[i]["asesor"],
+                                analisis[i]["categoria"],
+                                analisis[i]["titulo"],
+                                analisis[i]["analisis"],
+                                analisis[i]["fecha"])
+            analisis_data.append(record)
+
+    return render(request, 'leer_analisiseconomicos.html', {"analisis_data": analisis_data})
 
 
 def visualizar_noticias(request):
     if request.method == 'POST':
-        print(request.POST.get('smbl_news2'))
-    return render(request, 'visualizar_noticias.html')
+        ticker = request.POST.get('smbl_news2')
+        url = "https://newscatcher.p.rapidapi.com/v1/stocks"
+        querystring = {"ticker": ticker, "lang": "es", "media": "True", "sort_by": "relevancy"}
+        headers = {
+            'x-rapidapi-host': "newscatcher.p.rapidapi.com",
+            'x-rapidapi-key': "cf6361603dmsh38ad6751ae96265p117746jsne7c72722198b"
+        }
+        news_list = []
+        news_data = []
+
+        try:
+            response = requests.request("GET", url, headers=headers, params=querystring)
+            response_dict = {}
+            response_dict = response.json()
+            for news in response_dict['articles']:
+                news_list.append(news)
+        except Exception as e:
+            response = None
+            news_list = ''
+
+        if news_list is not None and bool(news_list[0]):
+            for i in range(0, len(news_list)):
+                News = namedtuple("News",
+                                  ["summary",
+                                   "country",
+                                   "author",
+                                   "link",
+                                   "language",
+                                   "media",
+                                   "title",
+                                   "media_content",
+                                   "clean_url",
+                                   "rights",
+                                   "rank",
+                                   "topic",
+                                   "published_date",
+                                   "id"])
+
+                record = News(news_list[i]["summary"],
+                              news_list[i]["country"],
+                              news_list[i]["author"],
+                              news_list[i]["link"],
+                              news_list[i]["language"],
+                              news_list[i]["media"],
+                              news_list[i]["title"],
+                              news_list[i]["media_content"],
+                              news_list[i]["clean_url"],
+                              news_list[i]["rights"],
+                              news_list[i]["rank"],
+                              news_list[i]["topic"],
+                              news_list[i]["published_date"],
+                              news_list[i]["_id"])
+                news_data.append(record)
+    return render(request, 'visualizar_noticias.html', {"news_data": news_data})
+
+
+def consultar_noticias_economicas(request):
+    url = "https://bing-news-search1.p.rapidapi.com/news/search"
+    querystring = {"q": "market OR economy OR investment OR stocks", "freshness": "Day", "textFormat": "Raw",
+                   "safeSearch": "Off"}
+    headers = {
+        'x-bingapis-sdk': "true",
+        'accept-language': "EN,ES",
+        'x-rapidapi-host': "bing-news-search1.p.rapidapi.com",
+        'x-rapidapi-key': "cf6361603dmsh38ad6751ae96265p117746jsne7c72722198b"
+    }
+    economic_news_list = []
+    economic_news_data = []
+
+    try:
+        response = requests.request("GET", url, headers=headers, params=querystring)
+        response_dict = {}
+        response_dict = response.json()
+
+        for news in response_dict['value']:
+            economic_news_list.append(news)
+    except Exception as e:
+        response = None
+        economic_news_list = ''
+
+    if economic_news_list is not None and bool(economic_news_list[0]):
+        for i in range(0, len(economic_news_list)):
+            Economic_News = namedtuple("Economic_News",
+                                       ["type",
+                                        "name",
+                                        "url",
+                                        "image",
+                                        "description",
+                                        "date"])
+
+            if economic_news_list[i]["image"]:
+                image = economic_news_list[i]["image"]["thumbnail"]["contentUrl"]
+            else:
+                image = ''
+            record = Economic_News(economic_news_list[i]["_type"],
+                                   economic_news_list[i]["name"],
+                                   economic_news_list[i]["url"],
+                                   image,
+                                   economic_news_list[i]["description"],
+                                   economic_news_list[i]["datePublished"])
+            economic_news_data.append(record)
+
+    return render(request, 'consultar_noticias_economicas.html', {"economic_news_data": economic_news_data})
+
+
+class CuentaAhorroList(ListView):
+    model = CuentaAhorro
+
+    def get_queryset(self):
+        return CuentaAhorro.objects.filter(
+            user=self.request.user
+        ).order_by('descripcion')
+
+
+class CuentaAhorroCreate(CreateView):
+    model = CuentaAhorro
+    success_url = reverse_lazy('cuentaahorro_list')
+    fields = ['descripcion', 'saldo', 'moneda']
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+
+class CuentaAhorroUpdate(UpdateView):
+    model = CuentaAhorro
+    success_url = reverse_lazy('cuentaahorro_list')
+    fields = ['descripcion', 'saldo', 'moneda']
+
+
+class CuentaAhorroDelete(DeleteView):
+    model = CuentaAhorro
+    success_url = reverse_lazy('cuentaahorro_list')
+
+
+class CategoriaMovimientoList(ListView):
+    model = CategoriaMovimiento
+
+    def get_queryset(self):
+        return CategoriaMovimiento.objects.filter(
+            user=self.request.user
+        ).order_by('nombre')
+
+
+class CategoriaMovimientoCreate(CreateView):
+    model = CategoriaMovimiento
+    success_url = reverse_lazy('categoriamovimiento_list')
+    fields = ['nombre']
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+
+class CategoriaMovimientoUpdate(UpdateView):
+    model = CategoriaMovimiento
+    success_url = reverse_lazy('categoriamovimiento_list')
+    fields = ['nombre']
+
+
+class CategoriaMovimientoDelete(DeleteView):
+    model = CategoriaMovimiento
+    success_url = reverse_lazy('categoriamovimiento_list')
+
+
+class CarteraAhorroList(ListView):
+    model = CarteraAhorro
+
+    def get_queryset(self):
+        return CarteraAhorro.objects.filter(
+            user=self.request.user
+        ).order_by('-fecha_movimiento')
+
+
+class CarteraAhorroCreate(CreateView):
+    model = CarteraAhorro
+    success_url = reverse_lazy('carteraahorro_list')
+    fields = ['cuenta', 'tipo_movimiento', 'categoria_movimiento', 'importe', 'fecha_movimiento', 'nota']
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        self.object = form.save()
+        cuenta_db = CuentaAhorro.objects.get(pk=self.object.cuenta.id)
+
+        if self.object.tipo_movimiento.tipo == "Ingreso":
+            cuenta_db.saldo += self.object.importe
+        elif self.object.tipo_movimiento.tipo == "Egreso":
+            cuenta_db.saldo -= self.object.importe
+
+        cuenta_db.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class CarteraAhorroUpdate(UpdateView):
+    model = CarteraAhorro
+    success_url = reverse_lazy('carteraahorro_list')
+    fields = ['cuenta', 'tipo_movimiento', 'categoria_movimiento', 'importe', 'fecha_movimiento', 'nota']
+
+    def form_valid(self, form):
+        movimiento_db = CarteraAhorro.objects.get(pk=self.object.id)
+        cuenta_db = CuentaAhorro.objects.get(pk=self.object.cuenta.id)
+        self.object = form.save()
+
+        if self.object.importe > movimiento_db.importe:
+            cuenta_db.saldo -= (self.object.importe - movimiento_db.importe)
+        elif self.object.importe < movimiento_db.importe:
+            cuenta_db.saldo += (movimiento_db.importe - self.object.importe)
+
+        cuenta_db.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class CarteraAhorroDelete(DeleteView):
+    model = CarteraAhorro
+    success_url = reverse_lazy('carteraahorro_list')
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        movimiento_db = CarteraAhorro.objects.get(pk=self.object.id)
+        cuenta_db = CuentaAhorro.objects.get(pk=self.object.cuenta.id)
+
+        if movimiento_db.tipo_movimiento.tipo == "Ingreso":
+            cuenta_db.saldo -= movimiento_db.importe
+        elif movimiento_db.tipo_movimiento.tipo == "Egreso":
+            cuenta_db.saldo += movimiento_db.importe
+
+        cuenta_db.save()
+        success_url = self.get_success_url()
+        self.object.delete()
+        return HttpResponseRedirect(success_url)
+
+
+def conversor_moneda(request):
+    return render(request, 'conversor_moneda.html')
+
+
+def tipos_cambio(request):
+    # url = f'https://v6.exchangerate-api.com/v6/{ER_API_KEY}/codes'
+    # response = requests.get(url)
+    # currency_codes_dict = {}
+    # currency_codes_dict = response.json()
+    # currency_list = []
+    #
+    # for currency in currency_codes_dict['supported_codes']:
+    #     currency_list.append(currency)
+
+    if request.method == 'POST':
+        curr_code = request.POST.get('curr_code')
+    else:
+        curr_code = 'ARS'
+
+    url = f'https://v6.exchangerate-api.com/v6/{ER_API_KEY}/latest/{curr_code}'
+    response = requests.get(url)
+    rates_dict = {}
+    rates_dict = response.json()
+    rates_ext_dict = {}
+    rates_list = []
+    exchange_rates = []
+
+    for key, value in rates_dict['conversion_rates'].items():
+        if key in ['ARS', 'USD', 'GBP', 'EUR', 'JPY', 'AUD', 'BRL', 'UYU', 'CNY', 'UYU']:
+            rates_ext_dict[key] = value
+
+    for key, value in rates_ext_dict.items():
+        rates_list.append([key, value])
+
+    if rates_list is not None and bool(rates_list[0]):
+        for i in range(0, len(rates_list)):
+            Exchange_Rates = namedtuple("Exchange_Rates",
+                                        ["Codigo",
+                                         "TC"])
+
+            record = Exchange_Rates(rates_list[i][0],
+                                    rates_list[i][1])
+            exchange_rates.append(record)
+
+    return render(request, 'tipos_cambio.html', {"exchange_rates": exchange_rates})

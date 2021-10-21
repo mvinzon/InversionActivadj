@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    ¿Estás seguro que deseas eliminar esta cuenta "{{ object.descripcion }}"?
+    <input type="submit" value="Submit" />
+</form>
+{% endblock content%}

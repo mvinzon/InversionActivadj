@@ -83,6 +83,13 @@ color: black;
 background-color: white;
 }
 
+.news_btn{
+color: black;
+background-color: rgba(199, 197, 197, 0.74);
+width: 200px;
+}
+
+
 .links{
 color: white;
 }

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<form method="post" enctype="multipart/form-data">
+
+  # Pasamos el 'csrf_token' de seguridad para poder crear un nuevo registro
+  {% csrf_token %}
+
+  <!-- {{ form.as_p }} -->
+  <div class="form-group">
+    <label for="nombre" class="txt_negrita">Nombre</label>
+    {{ form.nombre|add_class:"form-control" }}
+  </div>
+
+  <button type="submit" class="btn btn-primary">Aceptar</button>
+  <a href="./" type="submit" class="btn btn-primary">Cancelar</a>
+
+</form>
+{% endblock content%}
