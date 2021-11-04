@@ -23,7 +23,8 @@ from InversionActivadj.views import inicio, login2, contacto, registro, update_p
     CuentaAhorroUpdate, CuentaAhorroDelete, CategoriaMovimientoList, CategoriaMovimientoCreate, \
     CategoriaMovimientoUpdate, CategoriaMovimientoDelete, CarteraAhorroList, CarteraAhorroCreate, CarteraAhorroUpdate, \
     CarteraAhorroDelete, AnalisisEconomicosDelete, AnalisisEconomicosUpdate, AnalisisEconomicosCreate, \
-    leer_analisiseconomicos, conversor_moneda, tipos_cambio
+    leer_analisiseconomicos, conversor_moneda, tipos_cambio, reportes_ahorro, cartera_inversion_rendimiento, \
+    cotizaciones, PresupuestoList, PresupuestoCreate, PresupuestoUpdate, PresupuestoDelete
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -89,4 +90,19 @@ urlpatterns = [
          name='carteraahorro_delete'),
     path(r'conversor_moneda/', conversor_moneda, name='conversor_moneda'),
     path(r'tipos_cambio/', tipos_cambio, name='tipos_cambio'),
+    path(r'reportes_ahorro/', reportes_ahorro, name='reportes_ahorro'),
+    path(r'cartera_inversion_rendimiento/', cartera_inversion_rendimiento, name='cartera_inversion_rendimiento'),
+    path(r'cotizaciones/', cotizaciones, name='cotizaciones'),
+    path(r'presupuesto/listar/',
+         PresupuestoList.as_view(template_name='presupuesto_list.html'),
+         name='presupuesto_list'),
+    path(r'presupuesto/nuevo/',
+         PresupuestoCreate.as_view(template_name='presupuesto_form.html'),
+         name='presupuesto_create'),
+    path(r'presupuesto/modificar/<slug:pk>',
+         PresupuestoUpdate.as_view(template_name='presupuesto_form.html'),
+         name='presupuesto_edit'),
+    path(r'presupuesto/borrar/<slug:pk>',
+         PresupuestoDelete.as_view(template_name='presupuestoconfirmdelete.html'),
+         name='presupuesto_delete'),
 ]

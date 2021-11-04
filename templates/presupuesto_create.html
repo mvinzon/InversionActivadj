@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<form method="post" enctype="multipart/form-data">
+
+  {% csrf_token %}
+
+  <!-- {{ form.as_p }} -->
+  <div class="form-group">
+    <label for="mes" class="txt_negrita">Mes</label>
+    {{ form.mes|add_class:"form-control" }}
+  </div>
+  <div class="form-group">
+    <label for="anio" class="txt_negrita">Anio</label>
+    {{ form.anio|add_class:"form-control" }}
+  </div>
+  <div class="form-group">
+    <label for="tipo_movimiento" class="txt_negrita">Tipo movimiento</label>
+    {{ form.tipo_movimiento|add_class:"form-control" }}
+  </div>
+  <div class="form-group">
+    <label for="categoria_movimiento" class="txt_negrita">Categoría</label>
+    {{ form.categoria_movimiento|add_class:"form-control" }}
+  </div>
+  <div class="form-group">
+    <label for="importe" class="txt_negrita">Importe</label>
+    {{ form.importe|add_class:"form-control" }}
+  </div>
+
+  <button type="submit" class="btn btn-primary">Aceptar</button>
+  <a href="./" type="submit" class="btn btn-primary">Cancelar</a>
+
+</form>
+{% endblock content%}

@@ -89,6 +89,44 @@
               </tbody>
             </table>
         </div>
+
+        <p>Precio estimado por el modelo para el próximo día: {{ plots.precio_maniana }}</p>
+
+        <p>Recomendación: {{ plots.recomendacion }}</p>
+
+        <div style="margin-top: 100px;">
+            <img style="height: fit-content; width: fit-content" src="data:image/png;base64,{{ plots.graphic_one|safe }}">
+
+            <img style="height: fit-content; width: fit-content" src="data:image/png;base64,{{ plots.graphic_two|safe }}">
+
+            <img style="height: min-content; width: min-content" src="data:image/png;base64,{{ plots.graphic_three|safe }}">
+
+            <img style="height: max-content; width: max-content" src="data:image/png;base64,{{ plots.graphic_four|safe }}">
+
+            <img style="height: auto; width: auto" src="data:image/png;base64,{{ plots.graphic_five|safe }}">
+        </div>
+
+
+        <div style="margin-top: 100px;">
+            <h3>Menciones en Twitter</h3>
+            <table class="table table-striped table-hover" width="50px">
+              <thead>
+                <tr>
+                  <th>Nro.</th>
+                  <th>Tweet</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for tweet in tweets %}
+                    <tr>
+                      <td>{{ tweet.counter }}</td>
+                      <td>{{ tweet.text }}</td>
+                    </tr>
+                  {% endfor %}
+
+              </tbody>
+            </table>
+        </div>
     {% endif %}
 {% endblock content%}
 

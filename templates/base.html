@@ -55,16 +55,21 @@
                 <a class="nav-link" href="#" style="color:white">Simulador</a>
               </li>{% endcomment %}
               <li class="nav-item">
-                <a class="nav-link" href="#" style="color:white">Rendimiento</a>
+                <a class="nav-link" href="{% url 'cartera_inversion_rendimiento' %}" style="color:white">Rendimiento</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#" style="color:white">Cotizaciones</a>
+                <a class="nav-link" href="{% url 'cotizaciones' %}" style="color:white">Cotizaciones</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'consultar_noticias_economicas' %}" style="color:white">Noticias</a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'carteraahorro_list' %}" style="color:white">Ahorro</a>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLinkAhorro" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:white">Ahorro</a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLinkAhorro">
+                  <a class="dropdown-item" href="{% url 'carteraahorro_list' %}">Gestionar cartera ahorro</a>
+                  <a class="dropdown-item" href="{% url 'reportes_ahorro' %}">Reportes cartera ahorro</a>
+                  <a class="dropdown-item" href="{% url 'presupuesto_list' %}">Planificar presupuesto</a>
+                </div>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="{% url "conversor_moneda" %}" style="color:white">Conversor</a>

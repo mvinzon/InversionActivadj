@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    {% block title %}
+
+
+   {% endblock title %}
+</head>
+
+<body>
+{% block content %}
+    {% if user.is_authenticated %}
+
+        <form class="form-inline"  method="post" action="{% url 'reportes_ahorro' %}">
+        {% csrf_token %}
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-1">
+                    <label for="meses"> Mes:
+                        <select name="meses">
+                          {% for mes in meses %}
+                              <option>{{ mes }}</option>
+                          {% endfor %}
+                        </select>
+                    </label>
+                </div>
+                <div class="col-sm-2">
+                    <label for="anios"> Año:
+                        <select name="anios">
+                          {% for anio in anios %}
+                              <option>{{ anio }}</option>
+                          {% endfor %}
+                        </select>
+                    </label>
+                </div>
+                <div class="col-sm-6">
+                    <input type="submit" value="Visualizar" name="visualizar" style="position: fixed; margin-top: 30px">
+                </div>
+            </div>
+        </div>
+        </form>
+
+        <br>
+        <h3>Movimientos del mes</h3>
+        <label for="ing" style="font-weight: bold; font-size: larger">Ingresos: </label>
+        <strong style="font-size: larger">{{ ingresos }}</strong>
+        <br>
+        <label style="font-weight: bold; font-size: larger">Gastos: </label>
+        <strong style="font-size: larger">{{ gastos }}</strong>
+        <br>
+        <label style="font-weight: bold; font-size: larger">Saldo: </label>
+        {% if saldo > 0 %}
+            <strong style="font-size: larger; color: green">{{ saldo }}</strong>
+        {% elif saldo < 0 %}
+            <strong style="font-size: larger; color: red">{{ saldo }}</strong>
+        {% endif %}
+
+    {% endif %}
+{% endblock content%}
+
+{% block scripts %}
+
+{% endblock scripts%}
+</body>
+</html>

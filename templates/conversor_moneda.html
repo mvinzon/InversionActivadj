@@ -12,7 +12,64 @@
 <body>
 {% block content %}
     {% if user.is_authenticated %}
-        Conversor moneda
+
+        <div>
+            <form class="form-inline"  method="post" action="{% url 'conversor_moneda' %}">
+                <div>
+                {% csrf_token %}
+                    <label for="codes-from"> Moneda origen:
+                        <select name="codes-from" style="position: relative; margin-left: 10px; margin-top: 0px">
+                          {% for data in conversion_result %}
+                              <option>{{ data.Base }}</option>
+                          {% endfor %}
+                          {% for data in supported_codes %}
+                              <option> {{ data.Codigo }}: {{ data.Descripcion }}</option>
+                          {% endfor %}
+                        </select>
+                    </label>
+                <br>
+                    <label for="value-from" style="position: fixed; margin-left: 50px"> Importe:
+                        {% if not conversion_result %}
+                            <input type="number" name="value-from" value="" style="position: relative; margin-left: 10px">
+                        {% else %}
+                            {% for data in conversion_result %}
+                                <input type="number" name="value-from" value="{{ data.Amount }}" style="position: relative; margin-left: 10px">
+                            {% endfor %}
+                        {% endif %}
+                    </label>
+                </div>
+                <div>
+                <br>
+                    <label for="codes-to" style="position: relative; margin-left: 80px"> Moneda destino:
+                        <select name="codes-to" style="position: relative; margin-left: 10px">
+                          {% for data in conversion_result %}
+                              <option>{{ data.Target }}</option>
+                          {% endfor %}
+                          {% for data in supported_codes %}
+                              <option> {{ data.Codigo }}: {{ data.Descripcion }}</option>
+                          {% endfor %}
+                        </select>
+                    </label>
+                    <br>
+                    <label for="value-to" style="position: relative; margin-left: -30px"> Importe:
+                        {% if not conversion_result %}
+                            <input type="number" name="value-to" value="" style="position: relative; margin-left: 10px">
+                        {% else %}
+                            {% for data in conversion_result %}
+                                <input type="number" name="value-to" value="{{ data.Result }}" style="position: relative; margin-left: 10px">
+                            {% endfor %}
+                        {% endif %}
+                    </label>
+                </div>
+                <p>
+                    <span>
+                        <input type="submit" value="Convertir" name="convert_pair" style="position: fixed; margin-top: 30px">
+                    </span>
+                </p>
+
+            </form>
+        </div>
+
     {% endif %}
 {% endblock content%}
 

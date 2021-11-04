@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    {% block title %}
+
+   {% endblock title %}
+</head>
+
+<body>
+{% block content %}
+
+        <table class="table table-striped table-hover" width="50px">
+          <thead>
+            <tr>
+              <th>Símbolo</th>
+              <th>Descripción</th>
+              <th>Último precio</th>
+              <th>Precio anterior</th>
+              <th>Variación</th>
+              <th>Variación porcentual</th>
+            </tr>
+          </thead>
+          <tbody>
+
+          {% for record in cotizaciones %}
+            <tr>
+              <td>{{ record.Simbolo }}</td>
+              <td>{{ record.Descripcion }}</td>
+              <td>{{ record.Precio_Actual }}</td>
+              <td>{{ record.Precio_Anterior }}</td>
+              {% if record.Variacion > 0 %}
+                <td style="color: green">{{ record.Variacion }}</td>
+              {% elif record.Variacion < 0 %}
+                <td style="color: red">{{ record.Variacion }}</td>
+              {% endif %}
+              {% if record.Variacion_Porcentual > 0 %}
+                <td style="color: green">{{ record.Variacion_Porcentual }}</td>
+              {% elif record.Variacion_Porcentual < 0 %}
+                <td style="color: red">{{ record.Variacion_Porcentual }}</td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+
+          </tbody>
+        </table>
+
+{% endblock content%}
+
+{% block scripts %}
+
+{% endblock scripts%}
+</body>
+</html>

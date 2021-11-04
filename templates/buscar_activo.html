@@ -34,7 +34,7 @@
           </thead>
           <tbody>
 
-          {% for stock in all_stocks %}
+          {% for stock in stock %}
             <tr>
               <form class="form-inline"  method="post" action="{% url "consultar_activo" %}" id="consultar">
                   {% csrf_token %}

@@ -91,3 +91,11 @@ class CodigoMoneda(models.Model):
     en_descr = models.CharField(max_length=100)
     sp_descr = models.CharField(max_length=100, blank=True)
 
+
+class Presupuesto(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    tipo_movimiento = models.ForeignKey(TipoMovimiento, on_delete=models.DO_NOTHING, blank=True)
+    categoria_movimiento = models.ForeignKey(CategoriaMovimiento, on_delete=models.DO_NOTHING)
+    importe = models.DecimalField(blank=True, default=0, max_digits=19, decimal_places=2)
+    mes = models.IntegerField()
+    anio = models.IntegerField()

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    {% block title %}
+
+   {% endblock title %}
+</head>
+
+<body>
+{% block content %}
+
+        <table class="table table-striped table-hover" width="50px">
+          <thead>
+            <tr>
+              <th>Símbolo</th>
+              <th>Descripción</th>
+              <th>Precio de compra</th>
+              <th>Cantidad</th>
+              <th>Fecha</th>
+              <th>G/P</th>
+              <th>Precio actual</th>
+              <th>Variación porcentual</th>
+              <th>Variación capital</th>
+            </tr>
+          </thead>
+          <tbody>
+
+          {% for record in movimientos %}
+            <tr>
+              <td>{{ record.simbolo }}</td>
+              <td>{{ record.descripcion }}</td>
+              <td>{{ record.precio_compra }}</td>
+              <td>{{ record.cantidad_compra }}</td>
+              <td>{{ record.fecha_compra }}</td>
+              <td>{{ record.ganancias_perdidas }}</td>
+              <td>{{ record.precio_actual }}</td>
+              <td>{{ record.variacion }}</td>
+              <td>{{ record.variacion_capital }}</td>
+            </tr>
+          {% endfor %}
+
+          </tbody>
+        </table>
+
+{% endblock content%}
+
+{% block scripts %}
+
+{% endblock scripts%}
+</body>
+</html>
